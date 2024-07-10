@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload File</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <nav>
+        <button id="theme-toggle">Switch to Dark Mode</button>
+        {% if current_user.is_authenticated %}
+            <a href="/">Home</a>
+            <a href="/upload">File Upload</a>
+            <a href="/logout">Log Out</a>
+        {% else %}
+            <a href="/login">Login</a>
+            <a href="/sign-up">Sign Up</a>
+        {% endif %}
+    </nav>
+    <div class="container">
+        <h1>Upload a File</h1>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="file" required>
+            <input type="submit" value="Upload">
+        </form>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+        <h2>Uploaded Files</h2>
+        <ul>
+            {% for file in files %}
+                <li>
+                    <a href="{{ url_for('views.download_file', file_id=file.id) }}">{{ file.filename }}</a>
+                    <form method="post" action="{{ url_for('views.delete_file', file_id=file.id) }}" style="display:inline;">
+                        <button type="submit">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <script type="module" src="{{ url_for('static', filename='index.js') }}"></script>
+</body>
+</html>
